@@ -17,3 +17,20 @@
   --shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
 
+/* =========================
+   Reset / Base Styles
+========================= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
