@@ -34,3 +34,33 @@ body {
   line-height: 1.5;
 }
 
+/* =========================
+   Layout
+========================= */
+header,
+footer {
+  background-color: var(--color-surface);
+  padding: var(--spacing-sm) var(--spacing-md);
+  box-shadow: var(--shadow);
+}
+
+header h1 {
+  margin: 0;
+  color: var(--color-primary);
+}
+
+footer {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+
+/* App Grid */
+.app-container {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  min-height: calc(100vh - 120px);
+}
+
