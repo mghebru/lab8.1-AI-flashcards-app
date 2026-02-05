@@ -15,6 +15,18 @@
   --space-lg: 2rem;
 }
 
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f172a;
+    --surface: #020617;
+    --text: #e5e7eb;
+    --muted: #9ca3af;
+    --border: #1e293b;
+    --primary: #818cf8;
+  }
+}
+
 /* =========================
    Reset / Base Styles
 ========================= */
@@ -62,30 +74,9 @@ input:focus-visible {
 /* =========================
    Layout
 ========================= */
-header,
-footer {
-  background-color: var(--color-surface);
-  padding: var(--spacing-sm) var(--spacing-md);
-  box-shadow: var(--shadow);
-}
-
-header h1 {
-  margin: 0;
-  color: var(--color-primary);
-}
-
-footer {
-  text-align: center;
-  font-size: 0.875rem;
-  color: var(--color-muted);
-}
-
-/* App Grid */
 .app-container {
   display: grid;
-  grid-template-columns: 250px 1fr;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md);
+  grid-template-columns: 260px 1fr;
   min-height: calc(100vh - 120px);
 }
 
@@ -93,10 +84,9 @@ footer {
    Sidebar (Decks)
 ========================= */
 .sidebar {
-  background-color: var(--color-surface);
-  padding: var(--spacing-md);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  padding: var(--space-md);
+  border-right: 1px solid var(--border);
+  background: var(--surface);
 }
 
 .sidebar h2 {
@@ -109,39 +99,83 @@ footer {
   margin: 0;
 }
 
-.deck-list li {
-  padding: var(--spacing-xs);
+.deck {
+  width: 100%;
+  text-align: left;
+  padding: var(--space-sm);
+  border-radius: var(--radius);
+}
+
+.deck.active {
+  background: var(--primary);
+  color: white;
+}
+
+/* =========================
+   Main Content
+========================= */
+.main-content {
+  padding: var(--space-lg);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: var(--space-md);
+}
+
+.deck-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.toolbar {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+/* =========================
+   Card Area
+========================= */
+.card-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  background: var(--surface);
+  border: 2px dashed var(--primary);
+  border-radius: var(--radius);
+  padding: var(--space-lg);
+  min-height: 220px;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+/* =========================
+   Controls & Buttons
+========================= */
+.card-controls {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-md);
+}
+
+button {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius);
   cursor: pointer;
 }
 
-.deck-list li:hover {
-  background-color: var(--color-bg);
-}
-
-/* =========================
-   Main Card Area
-========================= */
-.card-area {
-  background-color: var(--color-surface);
-  padding: var(--spacing-lg);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-}
-
-.card {
-  border: 2px dashed var(--color-primary);
-  padding: var(--spacing-lg);
-  border-radius: var(--radius);
-  text-align: center;
-  font-size: 1.25rem;
-  min-height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+button.primary {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
 }
 
 /* =========================
@@ -153,22 +187,7 @@ footer {
   }
 
   .sidebar {
-    order: 2;
-  }
-
-  .card-area {
-    order: 1;
-  }
-}
-
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0f172a;
-    --surface: #020617;
-    --text: #e5e7eb;
-    --muted: #9ca3af;
-    --border: #1e293b;
-    --primary: #818cf8;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
   }
 }
