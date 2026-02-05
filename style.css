@@ -214,6 +214,42 @@ button.primary:hover {
   border-radius: var(--radius);
 }
 
+/* Card Flip Animation */
+.card {
+  perspective: 1000px;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  min-height: 220px;
+  max-width: 500px;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  min-height: 220px;
+  backface-visibility: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-lg);
+  border-radius: var(--radius);
+  font-size: 1.2rem;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+  border: 2px dashed var(--primary);
+}
 
 /* =========================
    Responsive Design

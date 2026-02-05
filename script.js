@@ -3,6 +3,8 @@ const openBtn = document.getElementById("openModal");
 const closeBtn = document.getElementById("closeModal");
 const overlay = document.querySelector(".modal-overlay");
 const modal = document.querySelector(".modal");
+const cardArea = document.querySelector(".card-area");
+
 
 let lastFocusedElement = null;
 
@@ -60,6 +62,23 @@ function trapFocus(e) {
     }
 }
 
+function renderCurrentCard() {
+  const deck = decks[activeDeckIndex];
+  if (!deck.cards.length) {
+    cardArea.innerHTML = "<p>No cards yet. Add some!</p>";
+    return;
+  }
+  const card = deck.cards[currentCardIndex];
+  cardArea.innerHTML = `
+    <article class="card">
+      <div class="card-inner">
+        <div class="card-front"><p>${card.front}</p></div>
+        <div class="card-back"><p>${card.back}</p></div>
+      </div>
+    </article>
+  `;
+}
+
 openBtn?.addEventListener("click", openModal);
 closeBtn?.addEventListener("click", closeModal);
 
@@ -69,3 +88,17 @@ overlay?.addEventListener("click", (e) => {
         closeModal();
     }
 });
+
+cardArea.addEventListener("click", (e) => {
+  const cardEl = e.target.closest(".card");
+  if (cardEl) cardEl.classList.toggle("flipped");
+});
+
+let decks = [
+  { name: "JavaScript", cards: [] },
+  { name: "CSS", cards: [] },
+  { name: "HTML", cards: [] },
+];
+
+let activeDeckIndex = 0;
+let currentCardIndex = 0;
