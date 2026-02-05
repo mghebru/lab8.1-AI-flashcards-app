@@ -8,6 +8,7 @@
   --muted: #6b7280;
   --primary: #4f46e5;
   --border: #e5e7eb;
+  --focus: #4f46e5;
 
   --radius: 8px;
   --space-sm: 0.75rem;
@@ -15,15 +16,18 @@
   --space-lg: 2rem;
 }
 
+
+
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0f172a;
-    --surface: #020617;
-    --text: #e5e7eb;
-    --muted: #9ca3af;
-    --border: #1e293b;
+    --bg: #121212;
+    --surface: #1e1e1e;
+    --text: #eeeeee;
     --primary: #818cf8;
+    --muted: #a1a1aa;
+    --border: #333333;
+    --focus: #ffb74d;
   }
 }
 
@@ -42,14 +46,30 @@ body {
   background-color: var(--bg);
   color: var(--text);
 }
+body.dark {
+    --bg: #121212;
+    --surface: #1e1e1e;
+    --text: #eeeeee;
+    --muted: #a1a1aa;
+    --primary: #818cf8;
+    --border: #333333;
+    --focus: #ffb74d;
+}
 
+header, .sidebar, .card, .modal {
+    background-color: var(--surface);
+    color: var(--text);
+}
 /* Focus styles */
 button:focus-visible,
 input:focus-visible {
   outline: 3px solid var(--primary);
   outline-offset: 2px;
 }
-
+button.primary {
+    background: var(--primary);
+    color: white;
+}
 /* =========================
    Header / Footer
 ========================= */
@@ -104,6 +124,7 @@ input:focus-visible {
   text-align: left;
   padding: var(--space-sm);
   border-radius: var(--radius);
+  border: 1px solid transparent;
 }
 
 .deck:hover {
@@ -144,6 +165,7 @@ input:focus-visible {
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 240px;
 }
 
 .card {
@@ -156,8 +178,12 @@ input:focus-visible {
   width: 100%;
   text-align: center;
   font-size: 1.2rem;
+  perspective: 10000px;
 }
 
+.card.flipped .card.inner {
+    transform: rotateY('180deg');
+}
 /* =========================
    Controls & Buttons
 ========================= */

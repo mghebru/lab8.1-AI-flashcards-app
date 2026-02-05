@@ -20,9 +20,15 @@ const deckListEl = document.querySelector(".deck-list");
 const deckHeaderEl = document.querySelector(".deck-header h2");
 const searchInput = document.querySelector(".toolbar input[type='search']");
 
+const themeBtn = document.createElement("button");
+themeBtn.textContent = "Dark mode";
+themeBtn.id = "themeToggleBtn";
+document.querySelector(".app-header").appendChild(themeBtn);
+
 let lastFocusedCardButton = null;
 let lastFocusedElement = null;
 
+let currentTheme = localStorage.getItem("theme") ||  "system";
 // ==========================
 // App State
 // ==========================
@@ -157,6 +163,25 @@ function renderCurrentCard(filteredIndex = null) {
   `;
 }
 
+function applyTheme(theme) {
+    document.body.classList.remove("dark");
+    if(theme === "dark") {
+document.body.classList.add("dark");
+        themeBtn.textContent = "Dark";
+    } else {
+        themeBtn.textContent = "Light"
+    }
+    localStorage.setItem("theme", theme);
+}
+
+const themes = ["system", "light", "dark"];
+themeBtn.addEventListener("click", () => {
+    let idx = themes.indexOf(currentTheme);
+    idx = (idx +1) % themes.length;
+    currentTheme = themes[idx];
+    applyTheme(currentTheme);
+})
+applyTheme(currentTheme);
 
 // ==========================
 // Event Listeners
