@@ -251,6 +251,20 @@ button.primary:hover {
   border: 2px dashed var(--primary);
 }
 
+.card-toolbar button {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.9rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: transparent;
+  cursor: pointer;
+}
+
+.card-toolbar button:hover {
+  background: var(--primary);
+  color: white;
+}
+
 /* =========================
    Responsive Design
 ========================= */
