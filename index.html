@@ -35,10 +35,9 @@
 
             <!-- Deck Header -->
             <header class="deck-header">
-                <h2 id="deckTitle">No Deck Selected</h2>
 
                 <div class="toolbar">
-                    <input type="search" placeholder="Search cards…" />
+                    <input type="search" placeholder="Search cards…" aria-label="Search cards"/>
                     <button id="shuffleBtn">Shuffle</button>
                     <button class="primary">New Card</button>
                 </div>
@@ -74,10 +73,8 @@
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
             <h2 id="modal-title">New Deck</h2>
 
-            <label>
-                Deck name
-                <input type="text" id="deckNameInput" />
-            </label>
+            <label for="deckNameInput">Deck name</label>
+            <input type="text" id="deckNameInput" />
 
             <div class="modal-actions">
                 <button id="saveDeck" class="primary">Save</button>

@@ -82,12 +82,13 @@ function openModal() {
     lastFocusedElement = document.activeElement;
     overlay.hidden = false;
     modal.querySelector(focusableSelectors)?.focus();
-    document.addEventListener("keydown", (e) => trapFocus(e, modal, closeModal));
+    modayKeyListener = (e) => trapFocus(e, modal, closeModal);
+    document.addEventListener("keydown", (e) => modayKeyListener);
 }
 
 function closeModal() {
     overlay.hidden = true;
-    document.removeEventListener("keydown", (e) => trapFocus(e, modal, closeModal));
+    document.removeEventListener("keydown", modayKeyListener);
     lastFocusedElement?.focus();
 }
 
