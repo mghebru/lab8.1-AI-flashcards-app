@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,47 +8,63 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="script.js">
 </head>
+
 <body>
-    
-      <!-- Header -->
-  <header class="app-header">
-    <h1>Flashcards</h1>
-    <button class="primary">New Deck</button>
-  </header>
 
-   <!-- Main App Layout -->
-  <main class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+        <h1>Flashcards</h1>
+        <button class="primary">New Deck</button>
+    </header>
 
-    <!-- Navigation / Decks -->
-    <nav class="sidebar" aria-label="Flashcard Decks">
-      <h2>Decks</h2>
-      <ul class="deck-list">
-        <li><button>JavaScript</button></li>
-        <li><button>CSS</button></li>
-        <li><button>HTML</button></li>
-      </ul>
-    </nav>
+    <!-- Main App Layout -->
+    <main class="app-container">
 
-    <!-- Card Area -->
-    <section class="card-area" aria-live="polite">
-      <h2>Cards</h2>
+        <!-- Navigation / Decks -->
+        <nav class="sidebar" aria-label="Decks">
+            <h2>Decks</h2>
+            <ul class="deck-list">
+                <li><button class="deck active">JavaScript</button></li>
+                <li><button class="deck">CSS</button></li>
+                <li><button class="deck">HTML</button></li>
+            </ul>
+        </nav>
 
-      <article class="card">
-        <p>What is a closure in JavaScript?</p>
-      </article>
+        <!-- Main Content -->
+        <section class="main-content">
 
-      <div class="card-actions">
-        <button>Flip</button>
-        <button>Next</button>
-      </div>
-    </section>
+            <!-- Deck Header -->
+            <header class="deck-header">
+                <h2>JavaScript</h2>
 
-  </main>
+                <div class="toolbar">
+                    <input type="search" placeholder="Search cards…" />
+                    <button>Shuffle</button>
+                    <button class="primary">New Card</button>
+                </div>
+            </header>
 
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2026 Flashcards App</p>
-  </footer>
+            <!-- Card Area -->
+            <section class="card-area" aria-live="polite">
+                <h2>Cards</h2>
+
+                <article class="card">
+                    <p>What is a closure in JavaScript?</p>
+                </article>
+
+                <div class="card-actions">
+                    <button>Flip</button>
+                    <button>Next</button>
+                </div>
+            </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Flashcards App</p>
+    </footer>
 
 </body>
+
 </html>
