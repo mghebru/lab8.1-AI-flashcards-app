@@ -94,3 +94,28 @@ footer {
   background-color: var(--color-bg);
 }
 
+/* =========================
+   Main Card Area
+========================= */
+.card-area {
+  background-color: var(--color-surface);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.card {
+  border: 2px dashed var(--color-primary);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius);
+  text-align: center;
+  font-size: 1.25rem;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
