@@ -119,3 +119,19 @@ footer {
   justify-content: center;
 }
 
+/* =========================
+   Responsive Design
+========================= */
+@media (max-width: 768px) {
+  .app-container {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    order: 2;
+  }
+
+  .card-area {
+    order: 1;
+  }
+}
