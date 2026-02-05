@@ -1,19 +1,34 @@
-
+// ==========================
+// DOM Elements
+// ==========================
 const openBtn = document.getElementById("openModal");
 const closeBtn = document.getElementById("closeModal");
 const overlay = document.querySelector(".modal-overlay");
 const modal = document.querySelector(".modal");
+
 const cardArea = document.querySelector(".card-area");
 const prevBtn = document.querySelector(".card-controls button:nth-child(1)");
 const flipBtn = document.querySelector(".card-controls button:nth-child(2)");
 const nextBtn = document.querySelector(".card-controls button:nth-child(3)");
 const newCardBtn = document.querySelector(".toolbar .primary"); // New Card button
+
 const cardModal = document.getElementById("cardModal");
 const closeCardModalBtn = document.getElementById("closeCardModal");
 const cardForm = document.getElementById("cardForm");
-let lastFocusedCardButton = null;
 
+const deckListEl = document.querySelector(".deck-list");
+const deckHeaderEl = document.querySelector(".deck-header h2");
+const searchInput = document.querySelector(".toolbar input[type='search']");
+
+let lastFocusedCardButton = null;
 let lastFocusedElement = null;
+
+// ==========================
+// App State
+// ==========================
+let decks = [];
+let activeDeckIndex = 0;
+let currentCardIndex = 0;
 
 const focusableSelectors = `
   a[href],
@@ -24,65 +39,116 @@ const focusableSelectors = `
   [tabindex]:not([tabindex="-1"])
 `;
 
+// ==========================
+// LocalStorage
+// ==========================
+function saveState() {
+    localStorage.setItem("flashcardsAppState", JSON.stringify({ decks, activeDeckIndex, currentCardIndex }));
+}
+
+function loadState() {
+    const saved = localStorage.getItem("flashcardsAppState");
+    if (!saved) return;
+    try {
+        const state = JSON.parse(saved);
+        if (state.decks) decks = state.decks;
+        if (state.activeDeckIndex !== undefined) activeDeckIndex = state.activeDeckIndex;
+        if (state.currentCardIndex !== undefined) currentCardIndex = state.currentCardIndex;
+    } catch (err) {
+        console.warn("Failed to load saved state:", err);
+    }
+}
+
+// ==========================
+// Modal Helpers
+// ==========================
+function trapFocus(e, container, closeFn) {
+    if (e.key === "Escape") return closeFn();
+    if (e.key !== "Tab") return;
+
+    const focusable = container.querySelectorAll(focusableSelectors);
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+    }
+}
+
 function openModal() {
-    if (!overlay.hidden) return; // already open
+    if (!overlay.hidden) return;
     lastFocusedElement = document.activeElement;
-
     overlay.hidden = false;
-
-    const focusableElements = modal.querySelectorAll(focusableSelectors);
-    focusableElements[0].focus();
-
-    document.addEventListener("keydown", trapFocus);
+    modal.querySelector(focusableSelectors)?.focus();
+    document.addEventListener("keydown", (e) => trapFocus(e, modal, closeModal));
 }
 
 function closeModal() {
     overlay.hidden = true;
-    document.removeEventListener("keydown", trapFocus);
-
-    if (lastFocusedElement) {
-        lastFocusedElement.focus();
-    }
+    document.removeEventListener("keydown", (e) => trapFocus(e, modal, closeModal));
+    lastFocusedElement?.focus();
 }
 
-function trapFocus(e) {
-    if (!overlay.hidden) { // only trap when modal is open
-        if (e.key === "Escape") {
-            e.preventDefault();
-            closeModal();
-            return;
-        }
-
-        if (e.key !== "Tab") return;
-
-        const focusableElements = modal.querySelectorAll(focusableSelectors);
-        const first = focusableElements[0];
-        const last = focusableElements[focusableElements.length - 1];
-
-        if (e.shiftKey && document.activeElement === first) {
-            e.preventDefault();
-            last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-            e.preventDefault();
-            first.focus();
-        }
-    }
+function openCardModal() {
+    lastFocusedCardButton = document.activeElement;
+    cardModal.hidden = false;
+    cardModal.querySelector("input[name='front']").focus();
+    document.addEventListener("keydown", (e) => trapFocus(e, cardModal, closeCardModal));
 }
 
-function renderCurrentCard() {
-    const deck = decks[activeDeckIndex];
-    if (!deck.cards.length) {
-        cardArea.innerHTML = "<p>No cards yet. Add some!</p>";
-        return;
-    }
-    const card = deck.cards[currentCardIndex];
-    cardArea.innerHTML = `
+function closeCardModal() {
+    cardModal.hidden = true;
+    document.removeEventListener("keydown", (e) => trapFocus(e, cardModal, closeCardModal));
+    lastFocusedCardButton?.focus();
+}
+
+
+// ==========================
+// Deck / Card Rendering
+// ==========================
+function renderSidebar() {
+  deckListEl.innerHTML = "";
+  decks.forEach((deck, idx) => {
+    const li = document.createElement("li");
+    const btn = document.createElement("button");
+    btn.textContent = deck.name;
+    btn.className = `deck${idx === activeDeckIndex ? " active" : ""}`;
+    btn.addEventListener("click", () => {
+      activeDeckIndex = idx;
+      currentCardIndex = 0;
+      renderSidebar();
+      renderDeckHeader();
+      renderCurrentCard();
+      saveState();
+    });
+    li.appendChild(btn);
+    deckListEl.appendChild(li);
+  });
+}
+
+function renderDeckHeader() {
+  deckHeaderEl.textContent = decks[activeDeckIndex]?.name || "No Deck";
+}
+
+function renderCurrentCard(filteredIndex = null) {
+  const deck = decks[activeDeckIndex];
+  if (!deck || !deck.cards.length) {
+    cardArea.innerHTML = "<p>No cards yet. Add some!</p>";
+    return;
+  }
+
+  const idx = filteredIndex !== null ? filteredIndex : currentCardIndex;
+  const card = deck.cards[idx];
+
+  cardArea.innerHTML = `
     <article class="card">
       <div class="card-inner">
         <div class="card-front"><p>${card.front}</p></div>
         <div class="card-back"><p>${card.back}</p></div>
       </div>
-       <div class="card-toolbar" style="margin-top:0.5rem; display:flex; justify-content:center; gap:0.5rem;">
+      <div class="card-toolbar" style="margin-top:0.5rem; display:flex; justify-content:center; gap:0.5rem;">
         <button class="edit-card">Edit</button>
         <button class="delete-card">Delete</button>
       </div>
@@ -90,128 +156,131 @@ function renderCurrentCard() {
   `;
 }
 
-function openCardModal() {
-    lastFocusedCardButton = document.activeElement;
-    cardModal.hidden = false;
-    cardModal.querySelector("input[name='front']").focus();
-    document.addEventListener("keydown", trapFocusCardModal);
-}
 
-function closeCardModal() {
-    cardModal.hidden = true;
-    document.removeEventListener("keydown", trapFocusCardModal);
-    lastFocusedCardButton?.focus();
-}
-
-function trapFocusCardModal(e) {
-    if (e.key === "Escape") return closeCardModal();
-
-    if (e.key !== "Tab") return;
-
-    const focusable = cardModal.querySelectorAll(focusableSelectors);
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-
-    if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-    } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-    }
-}
-
-
-
+// ==========================
+// Event Listeners
+// ==========================
 openBtn?.addEventListener("click", openModal);
 closeBtn?.addEventListener("click", closeModal);
-
-// Click outside modal to close
-overlay?.addEventListener("click", (e) => {
-    if (e.target === overlay) {
-        closeModal();
-    }
-});
-
-cardArea.addEventListener("click", (e) => {
-    const deck = decks[activeDeckIndex];
-    // Edit
-    if (e.target.classList.contains("edit-card")) {
-        const card = deck.cards[currentCardIndex];
-        openCardModal();
-        const frontInput = cardModal.querySelector("input[name='front']");
-        const backInput = cardModal.querySelector("input[name='back']");
-        frontInput.value = card.front;
-        backInput.value = card.back;
-
-        // Replace submit behavior temporarily
-        const submitHandler = (evt) => {
-            evt.preventDefault();
-            card.front = frontInput.value;
-            card.back = backInput.value;
-            renderCurrentCard();
-            closeCardModal();
-            cardForm.removeEventListener("submit", submitHandler);
-        };
-
-        cardForm.addEventListener("submit", submitHandler);
-    }
-
-    // Delete
-    if (e.target.classList.contains("delete-card")) {
-        const confirmDelete = confirm("Are you sure you want to delete this card?");
-        if (confirmDelete) {
-            deck.cards.splice(currentCardIndex, 1);
-            // Adjust current index
-            if (currentCardIndex >= deck.cards.length) currentCardIndex = deck.cards.length - 1;
-            renderCurrentCard();
-        }
-    }
-});
-
-prevBtn.addEventListener("click", () => {
-    const deck = decks[activeDeckIndex];
-    if (!deck.cards.length) return;
-    currentCardIndex = (currentCardIndex - 1 + deck.cards.length) % deck.cards.length;
-    renderCurrentCard();
-});
-
-nextBtn.addEventListener("click", () => {
-    const deck = decks[activeDeckIndex];
-    if (!deck.cards.length) return;
-    currentCardIndex = (currentCardIndex + 1) % deck.cards.length;
-    renderCurrentCard();
-});
-
-flipBtn.addEventListener("click", () => {
-    const cardEl = cardArea.querySelector(".card");
-    if (cardEl) cardEl.classList.toggle("flipped");
-});
+overlay?.addEventListener("click", (e) => { if (e.target === overlay) closeModal(); });
 
 newCardBtn.addEventListener("click", openCardModal);
 closeCardModalBtn.addEventListener("click", closeCardModal);
-cardModal.addEventListener("click", (e) => {
-    if (e.target === cardModal) closeCardModal();
-});
+cardModal.addEventListener("click", (e) => { if (e.target === cardModal) closeCardModal(); });
 
-// Add card to deck
+// Card form submission
 cardForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const formData = new FormData(cardForm);
-    const front = formData.get("front");
-    const back = formData.get("back");
-    decks[activeDeckIndex].cards.push({ front, back });
-    cardForm.reset();
-    closeCardModal();
-    currentCardIndex = decks[activeDeckIndex].cards.length - 1;
-    renderCurrentCard();
+  e.preventDefault();
+  const formData = new FormData(cardForm);
+  const front = formData.get("front");
+  const back = formData.get("back");
+  const deck = decks[activeDeckIndex];
+
+  const existingCard = deck.cards[currentCardIndex];
+  if (cardModal.dataset.editing === "true") {
+    existingCard.front = front;
+    existingCard.back = back;
+    cardModal.dataset.editing = "false";
+  } else {
+    deck.cards.push({ front, back });
+    currentCardIndex = deck.cards.length - 1;
+  }
+
+  cardForm.reset();
+  closeCardModal();
+  renderCurrentCard();
+  saveState();
 });
 
-let decks = [
-    { name: "JavaScript", cards: [] },
-    { name: "CSS", cards: [] },
-    { name: "HTML", cards: [] },
-];
+// Card toolbar clicks (edit/delete)
+cardArea.addEventListener("click", (e) => {
+  const deck = decks[activeDeckIndex];
+  if (!deck || !deck.cards.length) return;
 
-let activeDeckIndex = 0;
-let currentCardIndex = 0;
+  if (e.target.classList.contains("edit-card")) {
+    openCardModal();
+    const card = deck.cards[currentCardIndex];
+    cardModal.querySelector("input[name='front']").value = card.front;
+    cardModal.querySelector("input[name='back']").value = card.back;
+    cardModal.dataset.editing = "true";
+  }
+
+  if (e.target.classList.contains("delete-card")) {
+    if (confirm("Delete this card?")) {
+      deck.cards.splice(currentCardIndex, 1);
+      currentCardIndex = Math.min(currentCardIndex, deck.cards.length - 1);
+      renderCurrentCard();
+      saveState();
+    }
+  }
+});
+
+// Navigation & flip
+prevBtn.addEventListener("click", () => {
+  const deck = decks[activeDeckIndex];
+  if (!deck.cards.length) return;
+  currentCardIndex = (currentCardIndex - 1 + deck.cards.length) % deck.cards.length;
+  renderCurrentCard();
+  saveState();
+});
+
+nextBtn.addEventListener("click", () => {
+  const deck = decks[activeDeckIndex];
+  if (!deck.cards.length) return;
+  currentCardIndex = (currentCardIndex + 1) % deck.cards.length;
+  renderCurrentCard();
+  saveState();
+});
+
+flipBtn.addEventListener("click", () => {
+  const cardEl = cardArea.querySelector(".card");
+  cardEl?.classList.toggle("flipped");
+});
+
+// Search
+searchInput?.addEventListener("input", () => {
+  const query = searchInput.value.trim().toLowerCase();
+  const deck = decks[activeDeckIndex];
+  if (!deck || !deck.cards.length) return renderCurrentCard();
+
+  if (!query) return renderCurrentCard();
+
+  const filteredIndex = deck.cards.findIndex(
+    c => c.front.toLowerCase().includes(query) || c.back.toLowerCase().includes(query)
+  );
+
+  if (filteredIndex === -1) {
+    cardArea.innerHTML = "<p>No matching cards found.</p>";
+  } else {
+    renderCurrentCard(filteredIndex);
+  }
+});
+
+// Keyboard support
+document.addEventListener("keydown", (e) => {
+  if (document.activeElement.tagName === "INPUT") return; // skip if typing
+  if (e.code === "Space") flipBtn.click();
+  if (e.code === "ArrowLeft") prevBtn.click();
+  if (e.code === "ArrowRight") nextBtn.click();
+});
+
+// ==========================
+// Initialize app
+// ==========================
+function init() {
+  loadState();
+
+  if (!decks.length) {
+    decks = [
+      { name: "JavaScript", cards: [] },
+      { name: "CSS", cards: [] },
+      { name: "HTML", cards: [] },
+    ];
+  }
+
+  renderSidebar();
+  renderDeckHeader();
+  renderCurrentCard();
+}
+
+init();
