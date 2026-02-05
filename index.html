@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lab 1 Flashcard App</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="script.js">
+    <script src="script.js" defer></script>
 </head>
 
 <body>
@@ -14,39 +14,28 @@
     <!-- Header -->
     <header class="app-header">
         <h1>Flashcards</h1>
-        <button class="primary">New Deck</button>
+        <button id="newDeckBtn" class="primary">New Deck</button>
     </header>
 
     <!-- Main App Layout -->
     <main class="app-container">
 
-        <!-- Navigation / Decks -->
+        <!-- sidebar -->
         <nav class="sidebar" aria-label="Decks">
             <h2>Decks</h2>
-            <ul class="deck-list">
+            <ul class="deck-list" id="deckList">
                 <li><button class="deck active">JavaScript</button></li>
                 <li><button class="deck">CSS</button></li>
                 <li><button class="deck">HTML</button></li>
             </ul>
         </nav>
 
-        <button id="openModal">Open Modal</button>
-
-        <div class="modal-overlay" hidden>
-            <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-                <h2 id="modal-title">Accessible Modal</h2>
-                <p>This modal traps focus and restores it when closed.</p>
-
-                <button id="closeModal">Close</button>
-            </div>
-        </div>
-
         <!-- Main Content -->
         <section class="main-content">
 
             <!-- Deck Header -->
             <header class="deck-header">
-                <h2>JavaScript</h2>
+                <h2 id="deckTitle">No Deck Selected</h2>
 
                 <div class="toolbar">
                     <input type="search" placeholder="Search cards…" />
@@ -59,7 +48,7 @@
             <section class="card-area" aria-live="polite">
 
                 <article class="card front">
-                    <p>What is a closure in JavaScript?</p>
+                    <p>Select a deck to begin.</p>
                 </article>
             </section>
 
@@ -73,6 +62,23 @@
         </section>
 
     </main>
+
+    <!-- Modal -->
+    <div class="modal-overlay" hidden>
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <h2 id="modal-title">New Deck</h2>
+
+            <label>
+                Deck name
+                <input type="text" id="deckNameInput" />
+            </label>
+
+            <div class="modal-actions">
+                <button id="saveDeck" class="primary">Save</button>
+                <button id="cancelDeck">Cancel</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer>

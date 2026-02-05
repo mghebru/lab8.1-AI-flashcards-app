@@ -106,6 +106,10 @@ input:focus-visible {
   border-radius: var(--radius);
 }
 
+.deck:hover {
+  background: var(--border);
+}
+
 .deck.active {
   background: var(--primary);
   color: white;
@@ -172,11 +176,44 @@ button {
   cursor: pointer;
 }
 
+button:hover {
+  background: var(--border);
+}
+
 button.primary {
   background: var(--primary);
   color: white;
   border-color: var(--primary);
 }
+
+button.primary:hover {
+  opacity: 0.9;
+}
+
+/* =========================
+   Modal
+========================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: grid;
+  place-items: center;
+}
+
+.modal-overlay[hidden] {
+  display: none;
+}
+
+.modal {
+ background: var(--surface);
+  color: var(--text);
+  padding: var(--space-lg);
+  max-width: 400px;
+  width: 90%;
+  border-radius: var(--radius);
+}
+
 
 /* =========================
    Responsive Design
