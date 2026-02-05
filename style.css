@@ -64,3 +64,33 @@ footer {
   min-height: calc(100vh - 120px);
 }
 
+/* =========================
+   Sidebar (Decks)
+========================= */
+.sidebar {
+  background-color: var(--color-surface);
+  padding: var(--spacing-md);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.sidebar h2 {
+  margin-top: 0;
+}
+
+.deck-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.deck-list li {
+  padding: var(--spacing-xs);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.deck-list li:hover {
+  background-color: var(--color-bg);
+}
+
